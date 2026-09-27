@@ -15,7 +15,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Persistent store file paths
-const DATA_DIR = path.resolve(__dirname, 'data_store');
+const isVercel = Boolean(process.env.VERCEL);
+const DATA_DIR = isVercel ? path.join('/tmp', 'data_store') : path.resolve(__dirname, 'data_store');
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
@@ -750,4 +751,8 @@ async function startServer() {
   });
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export default app;
